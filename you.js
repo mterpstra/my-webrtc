@@ -80,8 +80,24 @@ function onGuestAnswerButtonClick(event)
 	peerConnection.setRemoteDescription(new RTCSessionDescription(guestanswer));
 }
 
+function onSocketMessage(event)
+{
+	console.log("I have a socket message:", event);
+}
+var socket;
+
 function init() 
 {
+
+	socket = new WebSocket("ws://localhost:8001");
+	console.log("socket:", socket);
+	socket.onmessage = onSocketMessage;
+
+
+	setTimeout(function() {
+		socket.send("Hello from YOU");
+	}, 5000);
+
 	console.log("my init function");
 	youVideo = document.getElementById("youVideo");
 	guestVideo = document.getElementById("guestVideo");

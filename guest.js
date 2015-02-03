@@ -126,7 +126,7 @@ function init()
 	socket.onmessage = onSocketMessage;
 
 	setTimeout(function() {
-		socket.send("Hello World");
+		socket.send("Hello from GUEST");
 	}, 5000);
 
 	console.log("my init function");
