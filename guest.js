@@ -33,7 +33,8 @@ function onIceCandidate(event)
 	console.log("onIceCandidate", event);
 	if (!peerConnection || !event || !event.candidate) return;
 	var candidate = event.candidate;
-	// POST-ICE-to-other-Peer(candidate.candidate, candidate.sdpMLineIndex);
+	var msg = {"type":"my-ice", "candidate":candidate};
+	socket.send(JSON.stringify(msg));
 }
 
 
@@ -77,7 +78,8 @@ function onCreateAnswerSuccess(answer)
 	peerConnection.setLocalDescription(answer);
 	//socket.emit('msg', { by: currentId, to: data.by, sdp: sdp, type: 'sdp-answer' });
 	console.log("My Answer needs to go back to the other person");
-	document.getElementById("guestanswer-textarea").value = JSON.stringify(answer);
+	//document.getElementById("guestanswer-textarea").value = JSON.stringify(answer);
+	socket.send(JSON.stringify(answer));
 }
 
 function onCreateAnswerError(error)
@@ -97,21 +99,32 @@ function onSetRemoteDescriptionError(error)
 	console.log("onSetRemoteDescriptionError", error);
 }
 
-function guestOfferButtonClick(event) 
+function onOfferReceived(jsonoffer) 
 {
-	console.log("guestOfferButtonClick: event" , event);
-	var offer = document.getElementById("guestoffer-textarea").value;
-	var jsonoffer = JSON.parse(offer);
 	var newSessionDescription = new RTCSessionDescription(jsonoffer);
 	console.log("newSessionDescription:", newSessionDescription);
-
-	 peerConnection.setRemoteDescription(newSessionDescription, onSetRemoteDescriptionSuccess, onSetRemoteDescriptionError);
-
+	peerConnection.setRemoteDescription(newSessionDescription, onSetRemoteDescriptionSuccess, onSetRemoteDescriptionError);
 }
 
 function onSocketMessage(event)
 {
 	console.log("I have a socket message:", event);
+	var msg = JSON.parse(event.data);
+	console.log("type:", msg.type);
+	switch(msg.type)
+	{
+		case "offer":
+			onOfferReceived(msg);
+		break;
+
+		case "my-ice":
+			peerConnection.addIceCandidate(new RTCIceCandidate(msg.candidate));
+		break;
+
+		default:
+			console.log("unhandled msg!!!", msg.type);
+		break;
+	}
 }
 
 
@@ -119,20 +132,10 @@ var socket;
 
 function init() 
 {
-
-
-	socket = new WebSocket("ws://localhost:8001");
-	console.log("socket:", socket);
+	socket = new WebSocket("ws://10.252.57.84:8001");
 	socket.onmessage = onSocketMessage;
-
-	setTimeout(function() {
-		socket.send("Hello from GUEST");
-	}, 5000);
-
-	console.log("my init function");
 	guestVideo = document.getElementById("guestVideo");
 	constraints = { audio: false, video: true };
 	navigator.webkitGetUserMedia(constraints, onGuestVideoSuccess, onGuestVideoError);
-	document.getElementById("guestoffer-button").onclick = guestOfferButtonClick;
 }
 
