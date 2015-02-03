@@ -114,6 +114,29 @@ function onSetRemoteDescriptionError(error)
 	console.log("onSetRemoteDescriptionError", error);
 }
 
+function onCreateOfferSuccess(sessionDescription)
+{
+	peerConnection.setLocalDescription(sessionDescription);
+	socket.send(JSON.stringify(sessionDescription));
+}
+
+function createPeerConnection() 
+{
+	peerConnection = new webkitRTCPeerConnection({ "iceServers": [{ "url": "stun:stun.l.google.com:19302" }] });
+	peerConnection.onicecandidate = onIceCandidate;
+	peerConnection.onaddstream = onAddStream;
+	peerConnection.addStream (streamToAttach);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+//  Event handlers on the DOM
+/////////////////////////////////////////////////////////////////////////////////////
+function onCallButtonClick(event)
+{
+	peerConnection.createOffer(onCreateOfferSuccess, onCreateOfferError, { 'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': true } });
+}
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////
 // Common Initialization stuff
@@ -125,6 +148,11 @@ function init()
 	guestVideo = document.getElementById("guestVideo");
 	constraints = { audio: false, video: true };
 	navigator.webkitGetUserMedia(constraints, onYouVideoSuccess, onYouVideoError);
+
+
+	document.getElementById("call-button").onclick = onCallButtonClick;
 }
+
+
 
 
