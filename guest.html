@@ -1,0 +1,36 @@
+<html>
+	<head>
+		<script src="guest.js"></script>
+		<link rel="stylesheet" type="text/css" href="mystyle.css">
+	</head>
+
+	<body onload="init()">
+		<h2>My Web RTC Playground (YOU)</h2>
+
+		<div id="container">
+
+			<div>
+				<h3>You</h3>
+				<video autoplay id="youVideo" class="client">
+				</video>
+			</div>
+
+			<div>
+				<h3>Guest</h4>
+				<video autoplay id="guestVideo" class="client">
+				</video>
+			</div>
+
+		</div>
+
+
+		<h2>Paste the offer here</h2>
+		<textarea id="guestoffer-textarea">Put the guest offer here</textarea>
+		<button id="guestoffer-button">GO</button>
+
+
+		<h2>Use this to send back to the caller.</h2>
+		<textarea id="guestanswer-textarea">My answer will just show up here...</textarea>
+
+	</body>
+</html>

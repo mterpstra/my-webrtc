@@ -1,0 +1,23 @@
+body {
+	background:#aaaaaa;
+}
+
+h2,h3 {
+	text-align:center;
+}
+
+video {
+	border-radius: 10px;
+}
+
+#container {
+	padding:10px;
+	display:flex;
+	flex-direction:row;
+	justify-content: space-around;
+}
+
+textarea {
+	width:100%;
+	height:100px;
+}
