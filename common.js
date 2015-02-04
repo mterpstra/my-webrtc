@@ -7,6 +7,7 @@ var socket, constraints, video, streamToAttach, peerConnection, youVideo, guestV
 function onSocketMessage(event)
 {
 	var msg = JSON.parse(event.data);
+	console.log("msg:", msg);
 	switch(msg.type)
 	{
 		case "offer":

@@ -21,6 +21,11 @@ var server = ws.createServer(function (conn) {
 
 	conn.on("text", function (str) {
 		console.log("Received from " + myguid);
+
+		var newmsg = JSON.parse(str);
+		newmsg["from"] = myguid;
+		str = JSON.stringify(newmsg);
+
 		for (var key in connections) {
 			if (key != myguid) {
 				console.log("Forwarding to: " + key);
