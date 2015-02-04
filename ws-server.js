@@ -22,12 +22,16 @@ var server = ws.createServer(function (conn) {
 	conn.on("text", function (str) {
 		console.log("Received from " + myguid);
 
-		var newmsg = JSON.parse(str);
-		newmsg["from"] = myguid;
-		str = JSON.stringify(newmsg);
+		var msg = JSON.parse(str);
+		msg["from"] = myguid;
+		str = JSON.stringify(msg);
 
 		for (var key in connections) {
-			if (key != myguid) {
+
+			if ((msg["to"] != null) && (key == msg["to"])) {
+				console.log("Forwarding to: " + key);
+				connections[key].sendText(str);
+			} else if ((msg["to"] == null) && (key != myguid)) {
 				console.log("Forwarding to: " + key);
 				connections[key].sendText(str);
 			}
