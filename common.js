@@ -29,7 +29,7 @@ function onSocketMessage(event)
 
 function socketInit()
 {
-	socket = new WebSocket("ws://localhost:8001");
+	socket = new WebSocket("ws://10.252.20.84:8001");
 	socket.onmessage = onSocketMessage;
 	return socket;
 }
