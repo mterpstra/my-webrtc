@@ -10,6 +10,10 @@ function onSocketMessage(event)
 	console.log("msg:", msg);
 	switch(msg.type)
 	{
+		case "join":
+			onJoinReceived(msg);
+		break;
+
 		case "offer":
 			onOfferReceived(msg);
 		break;
@@ -42,6 +46,11 @@ function notify(msg, to)
 	}
 
 	socket.send(JSON.stringify(msg));
+}
+
+function onJoinReceived(msg) 
+{
+	peerConnection.createOffer(onCreateOfferSuccess, onCreateOfferError, { 'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': true } });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -136,9 +145,9 @@ function createPeerConnection()
 /////////////////////////////////////////////////////////////////////////////////////
 //  Event handlers on the DOM
 /////////////////////////////////////////////////////////////////////////////////////
-function onCallButtonClick(event)
+function onJoinButtonClick(event)
 {
-	peerConnection.createOffer(onCreateOfferSuccess, onCreateOfferError, { 'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': true } });
+	notify({"type":"join"});
 }
 
 
@@ -154,8 +163,7 @@ function init()
 	constraints = { audio: false, video: true };
 	navigator.webkitGetUserMedia(constraints, onYouVideoSuccess, onYouVideoError);
 
-
-	document.getElementById("call-button").onclick = onCallButtonClick;
+	document.getElementById("join-button").onclick = onJoinButtonClick;
 }
 
 
