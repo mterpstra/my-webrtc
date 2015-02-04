@@ -35,10 +35,14 @@ function socketInit()
 	return socket;
 }
 
+function notify(msg, to)
+{
+	if (to != null) {
+		msg["to"] = to;
+	}
 
-
-
-
+	socket.send(JSON.stringify(msg));
+}
 
 /////////////////////////////////////////////////////////////////////////////////////
 // Common WebRTC Stuff
@@ -48,7 +52,7 @@ function onIceCandidate(event)
 	if (!peerConnection || !event || !event.candidate) return;
 	var candidate = event.candidate;
 	var msg = {"type":"my-ice", "candidate":candidate};
-	socket.send(JSON.stringify(msg));
+	notify(msg);
 }
 
 function onCreateOfferError(error)
@@ -97,7 +101,7 @@ function onYouVideoError(error)
 function onCreateAnswerSuccess(answer)
 {
 	peerConnection.setLocalDescription(answer);
-	socket.send(JSON.stringify(answer));
+	notify(answer);
 }
 
 function onCreateAnswerError(error)
@@ -118,7 +122,7 @@ function onSetRemoteDescriptionError(error)
 function onCreateOfferSuccess(sessionDescription)
 {
 	peerConnection.setLocalDescription(sessionDescription);
-	socket.send(JSON.stringify(sessionDescription));
+	notify(sessionDescription);
 }
 
 function createPeerConnection() 
